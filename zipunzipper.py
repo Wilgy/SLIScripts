@@ -78,30 +78,9 @@ def main():
 	create_dirs_is_nonexistent(student_dict, dir_name)
 
 	#create the student lab directories (could be more)
-	for student in student_dict.keys():
-		for file in student_dict[student]:
-			#if there are more than one labs submitted, we want to save the in seperate directories
-			if(len(student_dict[student]) > 1):
-				first_split = file.split(" - ")
-				if(len(first_split)  > 2):
-					file_directory_name = first_split[2]
-					second_split = file_directory_name.split(".zip")
-					if(len(second_split) > 0):
-						file_directory_name = second_split[0]
-						call(["mkdir", dir_name + student + '/' + file_directory_name])
-						call(["unzip", "-d", dir_name + student +  '/' + file_directory_name, temp_zip_directory_name + '/' + file], shell=False, stdout=False)
-					else:
-						print("ERROR: Unable to unzip lab: " + file + "for student: " + student)
-				else:
-					print("ERROR: Unable to unzip lab: " + file + "for student: " + student)
-			#otherwise they only have one lab submitted and we should just unzip it here
-			else:
-				call(["unzip", "-d", dir_name + student, temp_zip_directory_name + '/' + file], shell=False, stdout=False)
-		
-		if(len(student_dict[student]) == 0):
-			print("WARNING: Could not find labs for student: " + student)
+	unzip_labs(student_dict, dir_name, temp_zip_directory_name)
 
-	#remove initially temp directory
+	#remove the temp directory
 	call(["rm", "-r", temp_zip_directory_name])
 
 
@@ -147,14 +126,17 @@ def create_dirs_is_nonexistent(student_dict, root_dir):
 def unzip_labs(student_dict, dir_name, temp_zip_directory_name):
 	"""
 	unzips all of the lab zip files and places them in the correct directories
-
+	will warn the user if it was unable to get certain labs for certain files
+	@param student_dict the dictionary of students
+	@param dir_name the directory to unzip all of the labs into
+	@param temp_zip_directory_name name of directory with temp labs
 	"""
 	for student in student_dict.keys():
 		for file in student_dict[student]:
 			#if there are more than one labs submitted, we want to save the in seperate directories
 			if(len(student_dict[student]) > 1):
 				first_split = file.split(" - ")
-				if(len(first_split  > 2)):
+				if(len(first_split)  > 2):
 					file_directory_name = first_split[2]
 					second_split = file_directory_name.split(".zip")
 					if(len(second_split) > 0):
