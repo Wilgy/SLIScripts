@@ -1,10 +1,13 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import sys
 import os.path
 
 from subprocess import call, check_output
 from os import listdir
+
+#place to write all output we don't want to see
+devnull = open(os.devnull, 'w')
 
 def main():
 	"""
@@ -57,11 +60,11 @@ def main():
 		temp_zip_directory_name = dir_name + '/' + temp_zip_directory_name
 		dir_name = dir_name + '/'
 
-	call(["mkdir", temp_zip_directory_name], shell=False)
-	call(["unzip", "-d", temp_zip_directory_name, zip_file_name], shell=False)
+	call(["mkdir", temp_zip_directory_name], stdout=devnull, stderr=devnull)
+	call(["unzip", "-d", temp_zip_directory_name, zip_file_name], stdout=devnull, stderr=devnull)
 	# find . -type f ! -name "*.*" -delete
 	#remove all files that do not have a zip extension
-	call(["find", temp_zip_directory_name, "-type", "f", "!", "-name", "*.zip", "-delete"], shell=False)
+	call(["find", temp_zip_directory_name, "-type", "f", "!", "-name", "*.zip", "-delete"], stdout=devnull, stderr=devnull)
 
 	#grab all of the zip files that were unzipped from dropbox super zip
 	output = listdir(temp_zip_directory_name)
@@ -81,7 +84,7 @@ def main():
 	unzip_labs(student_dict, dir_name, temp_zip_directory_name)
 
 	#remove the temp directory
-	call(["rm", "-r", temp_zip_directory_name])
+	call(["rm", "-r", temp_zip_directory_name], stdout=devnull, stderr=devnull)
 
 
 def get_student_dict(student_name_file, zip_names):
@@ -121,7 +124,7 @@ def create_dirs_is_nonexistent(student_dict, root_dir):
 		root_dir += '/'
 	for student in student_dict.keys():
 		if(not os.path.exists(root_dir + student)):
-			call(["mkdir", root_dir + student])
+			call(["mkdir", root_dir + student], stdout=devnull, stderr=devnull)
 
 def unzip_labs(student_dict, dir_name, temp_zip_directory_name):
 	"""
@@ -141,15 +144,15 @@ def unzip_labs(student_dict, dir_name, temp_zip_directory_name):
 					second_split = file_directory_name.split(".zip")
 					if(len(second_split) > 0):
 						file_directory_name = second_split[0]
-						call(["mkdir", dir_name + student + '/' + file_directory_name])
-						call(["unzip", "-d", dir_name + student +  '/' + file_directory_name, temp_zip_directory_name + '/' + file], shell=False, stdout=False)
+						call(["mkdir", dir_name + student + '/' + file_directory_name], stdout=devnull, stderr=devnull)
+						call(["unzip", "-d", dir_name + student +  '/' + file_directory_name, temp_zip_directory_name + '/' + file], stdout=devnull, stderr=devnull)
 					else:
 						print("ERROR: Unable to unzip lab: " + file + "for student: " + student)
 				else:
 					print("ERROR: Unable to unzip lab: " + file + "for student: " + student)
 			#otherwise they only have one lab submitted and we should just unzip it here
 			else:
-				call(["unzip", "-d", dir_name + student, temp_zip_directory_name + '/' + file], shell=False, stdout=False)
+				call(["unzip", "-d", dir_name + student, temp_zip_directory_name + '/' + file], stdout=devnull, stderr=devnull)
 		
 		if(len(student_dict[student]) == 0):
 			print("WARNING: Could not find labs for student: " + student)
