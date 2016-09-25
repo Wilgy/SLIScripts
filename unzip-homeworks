@@ -1,0 +1,66 @@
+###
+# unzip-homeworks.sh - given a folder that contains student submissions from the
+#   grader account (submissions that come through try), unzips them and puts 
+#   them in appropriate directories the structure of the directory should be:
+#
+# -hwX
+#  |----stu0001
+#  |    |---tar1.gz
+#  |    |---tar2.gz
+#  |    |....
+#  |    |---tarN.gz
+#  |----stu0002
+#  |    |---tar1.gz
+#  |    |---tar2.gz
+#  |    |....
+#  |    |---tarN.gz
+# ...
+#
+#
+# Usage: unzip_homeworks.sh <N>
+#   N - the number of tars (activities) to be unpacked
+#
+# Author: T. Wilgenbusch
+###
+
+#!/bin/bash
+
+if [ $# -ne 1 ]; then
+    echo "Please give number of tars to be unpacked"
+    exit 1
+fi
+
+NUM_TARS=$1
+
+for i in $( ls ); do
+
+    if [ -d $i ]; then
+        echo "FOUND DIR $i"
+        cd $i
+        
+        for j in $(seq 1 $NUM_TARS); do
+
+            if [ -f "tar$j.gz" ]; then
+                echo "  FOUND TAR$j"
+                mkdir "tar$j"
+                mv "tar$j.gz" "tar$j"
+                cd "tar$j"
+                tar -xf "tar$j.gz"
+                cd ..
+            fi
+
+            if [ -f "ltar$j.gz" ]; then
+                echo "  FOUND LTAR$j"
+                mkdir "ltar$j"
+                mv "ltar$j.gz" "ltar$j"
+                cd "ltar$j"
+                tar -xf "ltar$j.gz"
+                cd ..
+            fi
+
+        done            
+        cd ..
+    fi
+done
+
+exit 0

@@ -1,0 +1,158 @@
+###
+# grade-homeworks.sh - given a directory with student comments in it, will 
+#   apply these comments to a student and prompt the user to grade the 
+#   individual activities as well
+#
+# NOTE: This script will need to be run on the grader account in order to work, 
+#   so it will need to be copy over along with the comments
+# NOTE: The comments should be formatted so that they have the same file names 
+#   as those created by the 'break-up-comments.py' script
+#
+# Usage: grade-homeworks.sh <N> <COMMENTS-DIR>
+#   N            - the number of activities being grading
+#   COMMENTS-DIR - The directory containing all of the comment files
+# 
+# Author: T. Wilgenbusch
+###
+
+#!/bin/bash
+
+GRADED=1
+NUM_ACTIVITIES=1
+CURRENT_ACTIVITY=1
+CURRENT_STUDENT="fake_student"
+CURRENT_ACTIVITY_FILE="COMMENT_DIR/fake_student-comment-1.txt"
+COMMENT_DIR="$(pwd)"
+
+###
+# delete_and_regrade_activity - prompts the user if they wish to delete the 
+#   last item graded and then regrade it
+###
+function delete_and_regrade_activity()
+{
+    DELETE="n"
+
+    echo -n "DELETE ACTIVITY GRADE? "
+    read DELETE
+
+    while [ "$DELETE" == "y" ]; do
+        echo "DELETING..."
+        rm $CURRENT_STUDENT/MAIL.$CURRENT_ACTIVITY
+        rm $CURRENT_STUDENT/GRADE.$CURRENT_ACTIVITY
+
+        echo -n "REGRADE ACTIVITY? "
+        read REGRADE
+        if [ "$REGRADE" == "y" ]; then
+            echo "Curremt Activity:        $CURRENT_ACTIVITY"
+            echo "Current Student:         $CURRENT_STUDENT"
+            echo "Current Student Comment: $CURRENT_ACTIVITY_FILE"
+
+            grade_this_activity
+
+            echo -n "DELETE ACTIVITY GRADE? "
+            read DELETE
+
+        else
+            DELETE="n"
+
+        fi
+    done
+}
+
+###
+# grade_this_activity - grades the current activity for the current student and 
+#   creates the MAIL file with the student's comments
+#
+# NOTE: There is a slight bug, where the grader script stops the grading and 
+#   puts the user in a separate terminal;  You can exit out of this terminal and
+#   and continuing grader to resume
+###
+function grade_this_activity()
+{
+    cat $CURRENT_ACTIVITY_FILE
+
+    echo "grade-hw -$CURRENT_ACTIVITY $CURRENT_STUDENT"
+    grade-hw -$CURRENT_ACTIVITY $CURRENT_STUDENT
+
+    cd $CURRENT_STUDENT
+
+    touch MAIL.$CURRENT_ACTIVITY
+    cat $CURRENT_ACTIVITY_FILE > MAIL.$CURRENT_ACTIVITY
+
+
+    cd ..
+
+    echo "GRADED $CURRENT_ACTIVITY!"
+}
+
+###
+# grade_this_student - grades all activities for the current student
+###
+function grade_this_student()
+{
+    for CURRENT_ACTIVITY in $(seq 1 $NUM_ACTIVITIES); do
+        echo "    ACTIVITY $CURRENT_ACTIVITY"
+        CURRENT_ACTIVITY_FILE="$COMMENT_DIR/$CURRENT_STUDENT-comment-$CURRENT_ACTIVITY.txt"
+        if [ -f "$CURRENT_ACTIVITY_FILE" ]; then
+            grade_this_activity
+            delete_and_regrade_activity
+        else
+            echo "NO COMMENTS FOR $CURRENT_STUDENT, NOT GRADED"
+        fi
+    done
+
+    cat $CURRENT_STUDENT/MAIL.*
+    cat $CURRENT_STUDENT/GRADE.*
+}
+
+###
+# grade_students - grades all students that have submitted for this homework
+###
+function grade_students()
+{
+    for CURRENT_STUDENT in $( ls ); do
+        if [ -d $CURRENT_STUDENT ]; then
+
+            echo "GRADING $CURRENT_STUDENT"
+            grade_this_student
+        fi
+    done
+}
+
+###
+# usage - usage message to print when given bad input
+###
+function usage()
+{
+    echo "grade-homework.sh NUM_ACTIVITIES FILE_DIR"
+    echo "  NUM_ACTIVITIES - the number of activities being graded"
+    echo "  FILE_DIR - the directory containing all of the lab comments"
+}
+
+# MAIN CODE TO EXECUTE
+
+# Check for valid command line arguments
+if [ $# -ne 2 ]; then
+    echo "Incorrect number of arguments"
+    usage
+    exit 1
+fi
+NUM_ACTIVITIES=$(($1))
+if [ $? -ne 0 ]; then
+    echo "Invalid number of activities"
+    usage
+    exit 1
+fi
+
+COMMENT_DIR="$(realpath -eq $2)"
+if [ $? -ne 0 ]; then
+    echo "Invalid comments directory"
+    usage
+    exit 1
+fi
+
+echo $COMMENT_DIR
+
+# Grade all of the students
+grade_students
+exit 0

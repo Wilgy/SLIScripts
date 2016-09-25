@@ -1,0 +1,7 @@
+stu0001 # Every user-name should be seperated by a newline, INCLUDING the LAST ONE
+stu0002
+stu0003
+stu0004
+stu0005
+stu0006
+...

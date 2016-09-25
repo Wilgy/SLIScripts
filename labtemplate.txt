@@ -1,0 +1,37 @@
+stu0001                     # REQUIRED
+-------------------------------------------------------------------------------
+Activity 1                  # REQUIRED 
+    Sub-Grade1      /X      # Sub fields optional
+    Sub-Grade2      /X
+    Sub-Grade3      /X
+    ...
+    Sub-Total       /X      # Also optional
+
+Activity 2
+    Sub-Grade1      /X
+    Sub-Grade2      /X
+    Sub-Grade3      /X
+    ....
+    Sub-Total       /X
+ 
+ ...
+
+Total               /X      # Optional
+
+stu0002
+-------------------------------------------------------------------------------
+Activity 1
+    Sub-Grade1      /X
+    Sub-Grade2      /X
+    Sub-Grade3      /X
+
+    Sub-Total       /X
+
+Activity 2
+    Sub-Grade1      /X
+    Sub-Grade2      /X
+    Sub-Grade3      /X
+
+    Sub-Total       /X
+
+Total               /X
