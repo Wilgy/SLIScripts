@@ -1,3 +1,5 @@
+#!/bin/bash
+
 ###
 # grade-homeworks.sh - given a directory with student comments in it, will 
 #   apply these comments to a student and prompt the user to grade the 
@@ -14,8 +16,6 @@
 # 
 # Author: T. Wilgenbusch
 ###
-
-#!/bin/bash
 
 GRADED=1
 NUM_ACTIVITIES=1

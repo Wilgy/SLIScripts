@@ -1,3 +1,5 @@
+#!/bin/bash
+
 ###
 # unzip-homeworks.sh - given a folder that contains student submissions from the
 #   grader account (submissions that come through try), unzips them and puts 
@@ -22,8 +24,6 @@
 #
 # Author: T. Wilgenbusch
 ###
-
-#!/bin/bash
 
 if [ $# -ne 1 ]; then
     echo "Please give number of tars to be unpacked"
