@@ -1,3 +1,4 @@
+#!/usr/bin/python
 """
 break-up-comments.py - given a comments file for a lab/homework/project, 
   breaks up the comments into separate files for each different activity for 
@@ -18,7 +19,6 @@ grader account
 Author: T. Wilgenbusch
 """
 
-#!/usr/bin/python
 
 import sys
 import os.path
@@ -158,6 +158,6 @@ def usage():
     """
     print("break-up-comments.py student_file comments_file")
     print("     students_file - The file containing all of the student\'s usernames")
-    print("     comments_file - THe file containing all the comments for all atudents (formatted correctly")
+    print("     comments_file - THe file containing all the comments for all atudents (formatted correctly)")
 
 main()
